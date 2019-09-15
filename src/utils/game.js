@@ -92,7 +92,6 @@ export const useGame = ({web3, account, hasher}) => {
         throw new Error('Salt value must be provided for solving the game')
       }
 
-      setOutput('Loading')
       const contract = new web3.eth.Contract(RPS.abi, address)
       const lastMove = await contract.methods.getLastMove().call()
       if(+lastMove === 0) {
@@ -126,7 +125,6 @@ export const useGame = ({web3, account, hasher}) => {
         throw new Error('Contract address incorrect')
       }
 
-      setOutput('Loading')
       const contract = new web3.eth.Contract(RPS.abi, address)
       const isTimeout = await contract.methods.getTimeout().call()
       if(!isTimeout) {
