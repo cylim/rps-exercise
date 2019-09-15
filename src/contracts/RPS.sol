@@ -36,7 +36,7 @@ contract RPS{
      *  @param _c2 The move submitted by j2.
      */
     function play(Move _c2) public payable {
-        require(c2 == Move.Null, "2 has not played yet");
+        require(c2 == Move.Null, "J2 has not played yet");
         require(msg.value == stake, "J2 has paid the stake.");
         require(msg.sender == j2, "Only j2 can call this function.");
 
@@ -99,14 +99,17 @@ contract RPS{
         else
             return (_c1 > _c2);
     }
-}
 
-contract Hasher{
-    /** @dev Give the commitement. Must only be called locally.
-     *  @param _c The move.
-     *  @param _salt The salt to increase entropy.
-     */
-    function hash(uint8 _c, uint256 _salt) public pure returns(bytes32) {
-        return keccak256(abi.encodePacked(_c,_salt));
+    function getStake() public view returns (uint256 s) {
+        return stake;
     }
+
+    function getLastMove() public view returns (Move c) {
+        return c2;
+    }
+
+    function getTimeout() public view returns (bool w) {
+        return now > lastAction + TIMEOUT;
+    }
+
 }
