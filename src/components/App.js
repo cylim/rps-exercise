@@ -15,7 +15,15 @@ function App() {
   const {web3, web3Error} = useWeb3()
   const {account, accountError} = useAccount({web3})
   const {contract, contractError} = useContract({web3, config: Hasher})
-  const {createGame, joinGame, solveGame, timeoutGame, output, history} = useGame({web3, account, hasher: contract}) 
+  const {
+    createGame,
+    joinGame,
+    solveGame,
+    timeoutGame,
+    output,
+    history,
+    loading,
+  } = useGame({web3, account, hasher: contract}) 
 
   return (
     <div className="App">
@@ -25,10 +33,11 @@ function App() {
         background={account ? 'green' : 'red'}
       />
       {contractError ? <Indicator text={contractError} /> : null}
+      {loading ? <Indicator text={'Loading...'} background={'blue'} /> : null}
 
       <CreateComponent handleAction={createGame} />
       {output ? <p>{output}</p> : null}
-      
+
       <JoinComponent handleAction={joinGame} />
       <ActionComponent handleSolve={solveGame} handleTimeout={timeoutGame} />
 

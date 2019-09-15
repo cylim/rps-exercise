@@ -5,9 +5,16 @@ import RPS from '../abis/RPS.json'
 export const useGame = ({web3, account, hasher}) => {
   const [output, setOutput] = useState('')
   const [history, setHistory] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const createGame = async ({move, salt, player, bet}) => {
     try {
+      if(loading) {
+        alert('Previous action is loading...')
+        return
+      }
+      setLoading(true)
+
       if (!player || !web3.utils.isAddress(player)) {
         throw new Error('Player address incorrect')
       }
@@ -27,14 +34,22 @@ export const useGame = ({web3, account, hasher}) => {
       setOutput(
         `Please send address: ${result._address} to the player. \nDon't forget your salt value.`,
       )
+      setLoading(false)
     } catch (err) {
       setOutput('')
       alert(err.message)
-    }
+      setLoading(false)
+    } 
   }
 
   const joinGame = async ({address, move}) => {
     try {
+      if (loading) {
+        alert('Previous action is loading...')
+        return
+      }
+      setLoading(true)
+
       if (!address || !web3.utils.isAddress(address)) {
         throw new Error('Contract address incorrect')
       }
@@ -53,22 +68,31 @@ export const useGame = ({web3, account, hasher}) => {
         from: account,
         value: stake,
       })
+
       setHistory([`played move-${move}: ${address}`, ...history])
-      
+      setLoading(false)
     } catch (err) {
       alert(err.message)
-    }
+      setLoading(false)
+    } 
   }
   
   const solveGame = async ({address, move, salt}) => {
     try {
+      if (loading) {
+        alert('Previous action is loading...')
+        return
+      }
+      setLoading(true)
+
       if (!address || !web3.utils.isAddress(address)) {
         throw new Error('Contract address incorrect')
       }
       if (!salt) {
         throw new Error('Salt value must be provided for solving the game')
       }
-      
+
+      setOutput('Loading')
       const contract = new web3.eth.Contract(RPS.abi, address)
       const lastMove = await contract.methods.getLastMove().call()
       if(+lastMove === 0) {
@@ -83,16 +107,26 @@ export const useGame = ({web3, account, hasher}) => {
         from: account,
       })
       setHistory([`solved: ${address}`, ...history])
+      setLoading(false)
     } catch (err) {
       alert(err.message)
+      setLoading(false)
     }
   }
   
   const timeoutGame = async ({address}) => {
     try {
+      if (loading) {
+        alert('Previous action is loading...')
+        return
+      }
+      setLoading(true)
+
       if (!address || !web3.utils.isAddress(address)) {
         throw new Error('Contract address incorrect')
       }
+
+      setOutput('Loading')
       const contract = new web3.eth.Contract(RPS.abi, address)
       const isTimeout = await contract.methods.getTimeout().call()
       if(!isTimeout) {
@@ -116,10 +150,20 @@ export const useGame = ({web3, account, hasher}) => {
       }
 
       setHistory([`timeout: ${address}`, ...history])
+      setLoading(false)
     } catch (err) {
       alert(err.message)
+      setLoading(false)
     }
   }
 
-  return {createGame, joinGame, solveGame, timeoutGame, output, history}
+  return {
+    createGame,
+    joinGame,
+    solveGame,
+    timeoutGame,
+    output,
+    history,
+    loading,
+  }
 }

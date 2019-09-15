@@ -18,7 +18,7 @@
     "eject": "react-scripts eject",
     "contract:c": "truffle compile",
     "contract:d": "truffle deploy",
-    "migrate:r:": "truffle migrate --network rinkeby"
+    "migrate:r": "truffle migrate --network rinkeby"
   },
   "eslintConfig": {
     "extends": "react-app"
